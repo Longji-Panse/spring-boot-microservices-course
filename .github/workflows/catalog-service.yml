@@ -4,12 +4,14 @@ on:
   push:
     paths:
       - 'catalog-service/**'
-    branches:
-      - '**'
+      - 'pom.xml'
+  pull_request:
+    paths:
+      - 'catalog-service/**'
+      - 'pom.xml'
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -20,16 +22,12 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '25'
-          distribution: 'oracle' # Oracle is usually the first to provide JDK 25 binaries
+          distribution: 'oracle'
           cache: 'maven'
 
       - name: Build and Test
-        # We run from root but focus only on catalog-service using -pl
-        # -am ensures parent/dependencies are included
-        run: mvn clean verify -pl catalog-service -am -Dspotless.check.skip=false
+        run: |
+          ./mvnw clean verify -pl catalog-service -am -Dspotless.check.skip=false
 
       - name: Spotless Check
-        # This confirms formatting was applied correctly
-        run: mvn spotless:check -pl catalog-service
-
-
+        run: ./mvnw spotless:check -pl catalog-service

@@ -1,0 +1,22 @@
+name: 'spring-boot-microservices-practice-course'
+
+services:
+  catalog-db:
+    image: postgres:17
+    container_name: sb-ms-catalog-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=polaris
+      - POSTGRES_PASSWORD=polaris
+      - POSTGRES_DB=catalogdb
+    volumes:
+      - catalog_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U polaris -d catalogdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  catalog_db_data:

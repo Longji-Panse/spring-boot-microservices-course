@@ -26,8 +26,8 @@ jobs:
           cache: 'maven'
 
       - name: Build and Test
-        run: |
-          ./mvnw clean verify -pl catalog-service -am -Dspotless.check.skip=false
+          # -f pom.xml ensures Maven starts at the root to find 'catalog-service'
+        run: ./mvnw clean verify -f pom.xml -pl catalog-service -am -Dspotless.check.skip=false
 
       - name: Spotless Check
         run: ./mvnw spotless:check -pl catalog-service

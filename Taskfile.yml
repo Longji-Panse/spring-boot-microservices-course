@@ -1,0 +1,38 @@
+version: '3'
+
+vars:
+  INFRA_COMPOSE_FILE: deployment/docker-compose/infra.yml
+
+tasks:
+  # Starts the infrastructure (DB, etc.) in the background
+  infra-up:
+    desc: Start infrastructure containers
+    cmds:
+      - docker compose -f {{.INFRA_COMPOSE_FILE}} up -d
+
+  # Stops and removes the infrastructure containers
+  infra-down:
+    desc: Stop infrastructure containers
+    cmds:
+      - docker compose -f {{.INFRA_COMPOSE_FILE}} down
+
+  # Stops containers but keeps them (useful for quick restarts)
+  infra-stop:
+    desc: Stop infrastructure containers without removing them
+    cmds:
+      - docker compose -f {{.INFRA_COMPOSE_FILE}} stop
+
+  # Restarts the infrastructure
+  infra-restart:
+    desc: Restart infrastructure containers
+    cmds:
+      - task: infra-down
+      - echo "Waiting 5 seconds for cleanup..."
+      - timeout /t 5 /nobreak               # sleeps for 5 seconds
+      - task: infra-up
+
+  # Shows the logs for the infrastructure
+  infra-logs:
+    desc: View logs for infrastructure containers
+    cmds:
+      - docker compose -f {{.INFRA_COMPOSE_FILE}} logs -f
